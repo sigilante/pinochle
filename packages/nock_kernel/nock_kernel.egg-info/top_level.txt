@@ -1,3 +1,0 @@
-nock
-nock_kernel
-noun
