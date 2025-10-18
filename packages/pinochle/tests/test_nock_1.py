@@ -1,4 +1,4 @@
-from nock import *
+from pinochle import *
 
 # Opcode 1 test cases in Nock format
 # *[a 1 b] = b (always returns the constant b, regardless of subject a)

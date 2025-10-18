@@ -1,6 +1,5 @@
 from ipykernel.kernelbase import Kernel
-from noun import parse, pretty
-from nock import nock, to_noun
+from pinochle import nock, to_noun, parse, pretty
 import sys
 import traceback
 import re
@@ -26,7 +25,27 @@ class NockKernel(Kernel):
         'mimetype': 'text/plain',
         'file_extension': '.nock',
     }
-    banner = "Nock 4K Kernel - An Urbit Nock interpreter"
+    banner = """Nock 4K Kernel - An Urbit Nock interpreter
+Version 1.0
+Copyright (c) 2025 N. E. Davis for Urbit Systems Technical Journal
+License: MIT
+
+For help, type :help
+"""
+    help_links = [
+        {
+            'text': 'Nock Specification',
+            'url': 'https://nock.is/content/specification/index.html'
+        },
+        {
+            'text': 'Urbit Documentation', 
+            'url': 'https://docs.urbit.org'
+        },
+        {
+            'text': 'NockApp Documentation',
+            'url': 'https://docs.nockchain.org'
+        }
+    ]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

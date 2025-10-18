@@ -1,4 +1,4 @@
-from nock import *
+from pinochle import *
 
 # Opcode 0 test cases in Nock format
 # Format: (subject_str, formula_str, expected_str, should_crash, description)
