@@ -1,0 +1,74 @@
+Metadata-Version: 2.4
+Name: pinochle
+Version: 1.0.0
+Summary: Python implementation of the Nock 4K Combinator Calculus.
+Home-page: https://github.com/sigilante/pinochle
+Author: N. E. Davis
+Author-email: "N. E. Davis" <neal@zorp.io>
+License: MIT
+Project-URL: Homepage, https://github.com/sigilante/pinochle
+Project-URL: Repository, https://github.com/sigilante/pinochle
+Project-URL: Issues, https://github.com/sigilante/pinochle/issues
+Keywords: nock,urbit,interpreter,pinochle,nockapp,nockchain
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Nock :: 4K
+Classifier: Topic :: Software Development :: Interpreters
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: mmh3
+Requires-Dist: bitstring
+Dynamic: author
+Dynamic: home-page
+Dynamic: requires-python
+
+# Pinochle - Core Library
+
+Python implementation of the Nock 4K Combinator Calculus.
+
+## Components
+
+* `noun.py`:  [`pynoun` from Urbit](https://github.com/urbit/tools/blob/master/pkg/pynoun/noun.py)
+* `nock.py`:  Nock tree-walking interpreter
+
+## Installation
+
+```bash
+pip install pinochle
+```
+
+Or from source:
+```bash
+git clone https://github.com/sigilante/pinochle.git
+cd pinochle/packages/pinochle
+pip install .
+```
+
+## Usage
+
+```python
+from pinochle import nock, parse_noun
+
+# Parse and evaluate Nock expressions
+result = nock(42, parse_noun("[0 1]"))
+print(result)  # 42
+
+# Increment
+result = nock(41, parse_noun("[4 0 1]"))
+print(result)  # 42
+```
+
+## API Reference
+
+See full documentation in the repository.
+
+## License
+
+MIT License

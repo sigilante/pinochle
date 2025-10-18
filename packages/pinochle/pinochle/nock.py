@@ -1,4 +1,4 @@
-from noun import Cell, deep, parse, noun, pretty
+from .noun import Cell, deep, parse, noun, pretty
 
 # Constants as nouns
 tru = 0

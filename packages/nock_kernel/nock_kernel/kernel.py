@@ -1,6 +1,5 @@
 from ipykernel.kernelbase import Kernel
 from pinochle import nock, to_noun, parse, pretty
-import sys
 import traceback
 import re
 
