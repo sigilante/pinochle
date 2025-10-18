@@ -3,6 +3,18 @@ from noun import parse, pretty
 from nock import nock, to_noun
 import sys
 import traceback
+import re
+
+def preprocess_hoon_syntax(code):
+    """Convert Hoon syntax to plain Nock syntax
+    
+    Converts:
+    - %0, %1, %2, etc. → 0, 1, 2, etc.
+    - .*(subject formula) stays as-is
+    """
+    # Replace %N (where N is a number) with just N
+    code = re.sub(r'%(\d+)', r'\1', code)
+    return code
 
 class NockKernel(Kernel):
     implementation = 'Nock'
@@ -31,7 +43,10 @@ class NockKernel(Kernel):
         
         try:
             code = code.strip()
-            
+
+            # Preprocess Hoon syntax (convert %N to N)
+            code = preprocess_hoon_syntax(code)
+
             # Handle Hoon dottar syntax: .*(subject formula)
             if code.startswith('.*(') and code.endswith(')'):
                 # Extract the content between .*( and )

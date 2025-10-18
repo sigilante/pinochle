@@ -125,16 +125,10 @@ def hax(x: noun, a: noun, b: noun) -> noun:
         new_a = Cell(fas(x - 1, b), a)
         return hax(new_axis, new_a, b)
 
-def debug_print(msg):
-    # if DEBUG:
-    print(msg)
-
 def nock(a, formula):
     """The Nock virtual machine interpreter"""
     a = to_noun(a)
     formula = to_noun(formula)
-
-    debug_print(f"nock({pretty(a, False)}, {pretty(formula, False)})")
 
     if deep(formula):
         f_head = head(formula)
