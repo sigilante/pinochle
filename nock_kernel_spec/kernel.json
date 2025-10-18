@@ -9,5 +9,26 @@
   "display_name": "Nock 4K",
   "language": "nock",
   "interrupt_mode": "signal",
-  "env": {}
+  "env": {},
+  "metadata": {
+    "debugger": false,
+    "author": "N. E. Davis",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2025 Urbit Systems Technical Journal",
+    "url": "https://github.com/sigilante/pinochle",
+    "help_links": [
+      {
+        "text": "Nock Specification",
+        "url": "https://nock.is/content/specification/index.html"
+      },
+      {
+        "text": "Urbit Documentation",
+        "url": "https://docs.urbit.org"
+      },
+      {
+        "text": "NockApp Documentation",
+        "url": "https://docs.nockchain.org"
+      },
+    ]
+  }
 }
