@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python",
+    "-m",
+    "nock_kernel",
+    "-f",
+    "{connection_file}"
+  ],
+  "display_name": "Nock 4K",
+  "language": "nock",
+  "interrupt_mode": "signal",
+  "env": {}
+}
