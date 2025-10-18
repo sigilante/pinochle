@@ -56,7 +56,8 @@ OPCODE_0_TESTS = [
     ("100", "[0 3]", None, True, "axis 3 on atom crashes"),
     
     # Edge case: large axis on sufficient tree
-    ("[1 2 3 4 5 6 7]", "[0 127]", "7", False, "axis 32 on deep tree"),
+    ("[1 2 3 4 5 6 7]", "[0 127]", "7", False, "axis 127 on deep tree"),
+    ("[[[[[[1 2] 3] 4] 5] 6] 7]", "[0 64]", "1", False, "axis 64 on deep tree"),
 ]
 
 def test_opcode_0():
@@ -71,7 +72,7 @@ def test_opcode_0():
             result = nock(subject, formula)
             
             if should_crash:
-                print(f"❌ Test {i+1} FAILED: {description}")
+                print(f"✗ Test {i+1} FAILED: {description}")
                 print(f"   Subject: {subject_str}, Formula: {formula_str}")
                 print(f"   Expected crash but got: {result}")
                 failed += 1
@@ -81,7 +82,7 @@ def test_opcode_0():
                     print(f"✓ Test {i+1} passed: {description}")
                     passed += 1
                 else:
-                    print(f"❌ Test {i+1} FAILED: {description}")
+                    print(f"✗ Test {i+1} FAILED: {description}")
                     print(f"   Subject: {subject_str}, Formula: {formula_str}")
                     print(f"   Expected: {expected_str}, Got: {result}")
                     failed += 1
@@ -90,7 +91,7 @@ def test_opcode_0():
                 print(f"✓ Test {i+1} passed: {description} (crashed as expected)")
                 passed += 1
             else:
-                print(f"❌ Test {i+1} FAILED: {description}")
+                print(f"✗ Test {i+1} FAILED: {description}")
                 print(f"   Subject: {subject_str}, Formula: {formula_str}")
                 print(f"   Unexpected crash: {e}")
                 failed += 1
