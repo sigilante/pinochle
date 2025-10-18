@@ -1,9 +1,18 @@
-from noun import Cell, deep, parse, noun
+from noun import Cell, deep, parse, noun, pretty
 
 # Constants as nouns
 tru = 0
 bad = 1
 
+
+def deep_copy_noun(n: noun) -> noun:
+    """Deep copy a noun to avoid aliasing issues"""
+    if not deep(n):
+        return n  # Atoms are immutable, no need to copy
+    else:
+        # Recursively copy cells
+        return Cell(deep_copy_noun(n.head), deep_copy_noun(n.tail))
+    
 def to_noun(n) -> noun:
     """Convert Python values to nouns using pynoun's representation"""
     if isinstance(n, noun):
@@ -116,11 +125,17 @@ def hax(x: noun, a: noun, b: noun) -> noun:
         new_a = Cell(fas(x - 1, b), a)
         return hax(new_axis, new_a, b)
 
+def debug_print(msg):
+    # if DEBUG:
+    print(msg)
+
 def nock(a, formula):
     """The Nock virtual machine interpreter"""
     a = to_noun(a)
     formula = to_noun(formula)
-    
+
+    debug_print(f"nock({pretty(a, False)}, {pretty(formula, False)})")
+
     if deep(formula):
         f_head = head(formula)
         f_tail = tail(formula)
@@ -150,7 +165,11 @@ def nock(a, formula):
             # *[a 2 b c] = *[*[a b] *[a c]]
             b = head(f_tail)
             c = tail(f_tail)
-            return nock(nock(a, b), nock(a, c))
+            # Evaluate both against the original subject
+            # Important: evaluate in the correct order
+            new_subject = nock(a, b)
+            new_formula = nock(a, c)
+            return nock(new_subject, new_formula)
         
         elif opcode == 3:
             # *[a 3 b] = ?*[a b]
@@ -178,9 +197,9 @@ def nock(a, formula):
             d = tail(cd_tail)
             
             inner = nock(a, Cell(4, Cell(4, b)))
-            middle = nock(a, Cell(Cell(2, 3), Cell(0, inner)))
-            outer_formula = Cell(Cell(c, d), Cell(0, middle))
-            return nock(a, outer_formula)
+            middle = nock(Cell(2, 3), Cell(0, inner))      # subject: [2 3]
+            outer = nock(Cell(c, d), Cell(0, middle))      # subject: [c d]
+            return nock(a, outer)                           # subject: a, formula: outer
         
         elif opcode == 7:
             # *[a 7 b c] = *[*[a b] c]
@@ -200,7 +219,11 @@ def nock(a, formula):
             b = head(f_tail)
             c = tail(f_tail)
             new_subject = nock(a, c)
-            new_formula = Cell(2, Cell(Cell(0, 1), Cell(0, b)))
+            # Build formula: [2 [0 1] 0 b]
+            # With right-branching: [2 [[0 1] [0 b]]]
+            # Deep copy b to prevent aliasing issues
+            b_copy = deep_copy_noun(b)
+            new_formula = Cell(2, Cell(Cell(0, 1), Cell(0, b_copy)))
             return nock(new_subject, new_formula)
         
         elif opcode == 10:
