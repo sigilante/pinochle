@@ -19,7 +19,6 @@ Classifier: Programming Language :: Python :: 3.9
 Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Classifier: Programming Language :: Python :: 3.12
-Classifier: Programming Language :: Nock :: 4K
 Classifier: Topic :: Software Development :: Interpreters
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown

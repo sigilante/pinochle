@@ -1,4 +1,4 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.4
 Name: nock_kernel
 Version: 1.0.0
 Summary: A Jupyter kernel for Nock 4K - Urbit's virtual machine
@@ -20,7 +20,6 @@ Classifier: Programming Language :: Python :: 3.9
 Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Classifier: Programming Language :: Python :: 3.12
-Classifier: Programming Language :: Nock :: 4K
 Classifier: Topic :: Software Development :: Interpreters
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
@@ -28,6 +27,18 @@ Requires-Dist: pinochle>=1.0.0
 Requires-Dist: ipykernel>=6.0
 Requires-Dist: mmh3
 Requires-Dist: bitstring
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: keywords
+Dynamic: license
+Dynamic: project-url
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
 
 # Nock Kernel
 

@@ -35,7 +35,6 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
-        'Programming Language :: Nock :: 4K',
         'Topic :: Software Development :: Interpreters',
     ],
     python_requires='>=3.8',

@@ -2,7 +2,7 @@
   "argv": [
     "python",
     "-m",
-    "nock_kernel",
+    "nock_kernel.kernel",
     "-f",
     "{connection_file}"
   ],
@@ -28,7 +28,7 @@
       {
         "text": "NockApp Documentation",
         "url": "https://docs.nockchain.org"
-      },
+      }
     ]
   }
 }
