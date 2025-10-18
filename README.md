@@ -36,7 +36,7 @@ result = nock(41, parse_noun("[4 0 1]"))
 print(result)  # 42
 ```
 
-See [packages/pinochle/README.md](packages/pinochle/README.md) for further details.
+See the [README](packages/pinochle/README.md) for further details.
 
 ## Nock Kernel
 
@@ -71,7 +71,7 @@ Create a new notebook and select "Nock 4K" as the kernel.
 :formula [4 4 4 4 0 6]
 ```
 
-See the [README.md](packages/nock_kernel/README.md) for further details and the [TUTORIAL.ipynb](packages/nock_kernel/TUTORIAL.ipynb) for more examples of use.
+See the [README](packages/nock_kernel/README.md) for further details and the [TUTORIAL](packages/nock_kernel/TUTORIAL.ipynb) for more examples of use.
 
 ## License
 
