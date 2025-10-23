@@ -76,3 +76,8 @@ See the [README](packages/nock_kernel/README.md) for further details and the [TU
 ## License
 
 This project is licensed under the MIT License - see [LICENSE](./LICENSE) for details.
+
+## Versions
+
+- 1.0.0 - Initial release of Pinochle with Nock 4K core library and Jupyter kernel.
+- 1.1.0 - Added variable definition and substitution in Nock kernel.
