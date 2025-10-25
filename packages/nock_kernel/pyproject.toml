@@ -34,3 +34,6 @@ dependencies = [
 Homepage = "https://github.com/sigilante/pinochle"
 Repository = "https://github.com/sigilante/pinochle"
 Issues = "https://github.com/sigilante/pinochle/issues"
+
+[tool.setuptools.package-data]
+nock_kernel = ["kernelspec/*.json"]
