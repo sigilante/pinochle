@@ -4,11 +4,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name='nock_kernel',
-    version='1.0.0',
-    author='Your Name',
-    author_email='your.email@example.com',
-    description='A Jupyter kernel for Nock 4K - Urbit\'s virtual machine',
+    name='pinochle',
+    version='1.1.0',
+    author='N. E. Davis',
+    author_email='neal@zorp.io',
+    description='Python implementation of the Nock 4K Combinator Calculus',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/sigilante/pinochle',
@@ -24,6 +24,9 @@ setup(
         'mmh3',
         'bitstring',
     ],
+    package_data={
+        'nock_kernel': ['kernelspec/kernel.json'],
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Jupyter',
