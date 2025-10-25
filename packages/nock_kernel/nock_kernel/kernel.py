@@ -158,6 +158,8 @@ For help, type :help
     :formula <formula> - Evaluate formula against current subject
     :nock <expr>       - Evaluate full nock expression [subject formula]
     :show              - Show current subject and last result
+    :<varname>         - Define variable 'varname' with a noun value
+    :show <varname>    - Show value of variable 'varname'
     :help              - Show this help message
 
     Hoon Syntax:
@@ -173,6 +175,9 @@ For help, type :help
     You can also evaluate formulas directly (uses current subject):
     [0 1]                       # Same as :formula [0 1]
     [4 0 1]                     # Increment the subject
+
+    :increment [4 0 1]
+    .*(43 increment)
     """
             elif code.startswith(':'):
                 # Define a variable. E.g., `:var-name [1 2 3]`
