@@ -81,3 +81,4 @@ This project is licensed under the MIT License - see [LICENSE](./LICENSE) for de
 
 - 1.0.0 - Initial release of Pinochle with Nock 4K core library and Jupyter kernel.
 - 1.1.0 - Added variable definition and substitution in Nock kernel.
+- 1.2.0 - Improved variable substitution and `:show` precision in Nock kernel.

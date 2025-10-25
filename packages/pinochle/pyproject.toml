@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pinochle"
-version = "1.1.0"
+version = "1.2.0"
 description = "Python implementation of the Nock 4K Combinator Calculus."
 readme = "README.md"
 requires-python = ">=3.8"

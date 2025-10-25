@@ -127,13 +127,22 @@ For help, type :help
                     output = pretty(result, False)
                     
             elif code.startswith(':show'):
-                # Show current state
-                output = f"Subject: {pretty(self.subject, False)}\n"
-                output += f"Variables:\n"
-                for var_name, var_value in self.variables.items():
-                    output += f"  {var_name} = {pretty(var_value, False)}\n"
-                if self.last_result is not None:
-                    output += f"Last result: {pretty(self.last_result, False)}"
+                # Show current state or specific variable
+                parts = code.split(None, 1)  # Split on first whitespace
+                
+                if len(parts) == 1:
+                    # :show with no args - show everything
+                    output = f"Subject: {pretty(self.subject, False)}\n"
+                    output += f"Timeout: {self.timeout}s\n"
+                    if self.last_result is not None:
+                        output += f"Last result: {pretty(self.last_result, False)}\n"
+                    
+                    if self.variables:
+                        output += "\nVariables:\n"
+                        for var_name, var_value in self.variables.items():
+                            output += f"  {var_name} = {pretty(var_value, False)}\n"
+                    else:
+                        output += "\nNo variables defined"
                     
             elif code.startswith(':help'):
                 output = """Nock Kernel Commands:
@@ -159,17 +168,19 @@ For help, type :help
     """
             elif code.startswith(':'):
                 # Define a variable. E.g., `:var-name [1 2 3]`
-                match = re.match(r':\s*([a-zA-Z_][a-zA-Z0-9_]*)\s* \s*(.+)', code)
+                match = re.match(r':\s*([a-zA-Z_][a-zA-Z0-9_-]*)\s+(.+)', code)
                 if match:
                     var_name = match.group(1)
                     var_value_str = match.group(2).strip()
+                    # SUBSTITUTE VARIABLES BEFORE PARSING
+                    var_value_str = self.substitute_variables(var_value_str)
                     var_value = parse(var_value_str)
                     if not hasattr(self, 'variables'):
                         self.variables = {}
                     self.variables[var_name] = var_value
                     output = f"Variable '{var_name}' set to: {pretty(var_value, False)}"
                 else:
-                    output = "Error: Invalid variable assignment syntax. Use :varname = <noun>"
+                    output = "Error: Invalid variable assignment syntax. Use :varname <noun>"
                     self.last_result = None
             else:
                 # Default: treat as formula against current subject
