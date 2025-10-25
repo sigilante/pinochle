@@ -73,6 +73,10 @@ Create a new notebook and select "Nock 4K" as the kernel.
 
 See the [README](packages/nock_kernel/README.md) for further details and the [TUTORIAL](packages/nock_kernel/TUTORIAL.ipynb) for more examples of use.
 
+## Examples
+
+* [~timluc-miptev (2025), “Nock for Everyday Coders”, _Urbit Systems Technical Journal_ II:1, pp. 1–45](https://mybinder.org/v2/gh/Urbit-Systems-Technical-Journal/nocksite/master?urlpath=[…]content/examples/timluc-miptev--nock-for-everyday-coders.ipynb).
+
 ## License
 
 This project is licensed under the MIT License - see [LICENSE](./LICENSE) for details.
