@@ -137,13 +137,21 @@ For help, type :help
                     if self.last_result is not None:
                         output += f"Last result: {pretty(self.last_result, False)}\n"
                     
-                    if self.variables:
+                    # Check if variables dict exists
+                    if hasattr(self, 'variables') and self.variables:
                         output += "\nVariables:\n"
                         for var_name, var_value in self.variables.items():
                             output += f"  {var_name} = {pretty(var_value, False)}\n"
                     else:
                         output += "\nNo variables defined"
-                    
+                else:
+                    # :show varname - show specific variable
+                    var_name = parts[1].strip()
+                    if hasattr(self, 'variables') and var_name in self.variables:
+                        output = f"{var_name} = {pretty(self.variables[var_name], False)}"
+                    else:
+                        output = f"Variable '{var_name}' not found"                    
+
             elif code.startswith(':help'):
                 output = """Nock Kernel Commands:
     :subject <noun>    - Set the subject for subsequent formulas
