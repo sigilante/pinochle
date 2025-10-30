@@ -133,7 +133,6 @@ For help, type :help
                 if len(parts) == 1:
                     # :show with no args - show everything
                     output = f"Subject: {pretty(self.subject, False)}\n"
-                    output += f"Timeout: {self.timeout}s\n"
                     if self.last_result is not None:
                         output += f"Last result: {pretty(self.last_result, False)}\n"
                     

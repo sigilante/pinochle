@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='pinochle',
-    version='1.2.0',
+    version='1.2.1',
     author='N. E. Davis',
     author_email='neal@zorp.io',
     description='Python implementation of the Nock 4K Combinator Calculus',

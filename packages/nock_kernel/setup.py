@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='nock-kernel',
-    version='1.2.0',
+    version='1.2.1',
     author='N. E. Davis',
     author_email='neal@zorp.io',
     description='Jupyter kernel for interactive Nock evaluation.',
@@ -15,7 +15,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        'pinochle>=1.2.0',
+        'pinochle>=1.2.1',
         'ipykernel>=6.0',
     ],
     python_requires='>=3.8',
