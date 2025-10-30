@@ -2,6 +2,8 @@
 
 Python implementation of the Nock 4K Combinator Calculus with a Jupyter kernel for interactive evaluation.  Extends Urbit's [`pynoun`](https://github.com/urbit/tools/blob/master/pkg/pynoun/noun.py).
 
+**Status:  Pinochle successfully implements Nock 4K and the `nock` Jupyter kernel works.  While there may be bugfixes or minor QOL updates, the project is considered complete and usable in production.**
+
 ![](https://d7hftxdivxxvm.cloudfront.net/?height=675&quality=80&resize_to=fill&src=https%3A%2F%2Fartsy-media-uploads.s3.amazonaws.com%2FB3-xVAQfM3480N-sdByhCA%252Fcustom-Custom_Size___A_Friend_in_Need_1903_C.M.Coolidge.jpg&width=1200)
 
 This project consists of two packages:
