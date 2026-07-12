@@ -27,6 +27,8 @@ from .noun import (
     jam,
     cue,
 )
+from . import jets
+from .jets import register as register_jet
 
 # Convenience alias
 parse_noun = parse
@@ -55,4 +57,6 @@ __all__ = [
     'mug',
     'jam',
     'cue',
+    'jets',
+    'register_jet',
 ]
