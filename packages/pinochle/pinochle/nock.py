@@ -16,11 +16,13 @@ def deep_copy_noun(n: noun) -> noun:
     
 def to_noun(n) -> noun:
     """Convert Python values to nouns using pynoun's representation"""
-    if isinstance(n, noun):
-        return n
-    elif isinstance(n, int):
+    if isinstance(n, int):
+        # (before the `noun` catch-all: noun = int | Cell, so this is where
+        # the non-negative guard actually gets a chance to run)
         if n < 0:
             raise ValueError(f"Noun integers must be non-negative, got {n}")
+        return n
+    elif isinstance(n, noun):
         return n
     elif isinstance(n, tuple):
         if len(n) == 0:
