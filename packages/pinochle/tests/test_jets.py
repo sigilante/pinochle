@@ -1,5 +1,5 @@
-"""Jet dispatch: static opcode-11 hints select native implementations while
-remaining semantically transparent (jet(a) == *[a body])."""
+"""Jet dispatch: a %fast opcode-11 hint [11 [%fast name] body] selects a
+native implementation while staying transparent (jet(a) == *[a body])."""
 
 import pytest
 from pinochle import nock, parse, to_noun, jets
@@ -9,9 +9,9 @@ def _run(subj, formula):
     return nock(parse(subj), parse(formula))
 
 
-def test_unregistered_tag_is_transparent():
-    # [11 tag [4 0 1]] with an unregistered tag == *[a 4 0 1] == a + 1.
-    assert _run("5", "[11 999999 [4 0 1]]") == 6
+def test_unregistered_name_is_transparent():
+    # %nonesuch is not registered: body [4 0 1] runs, == a + 1.
+    assert _run("5", "[11 [%fast %nonesuch] [4 0 1]]") == 6
 
 
 def test_jet_dispatches_and_stays_transparent():
@@ -22,8 +22,7 @@ def test_jet_dispatches_and_stays_transparent():
         return int(a) + 1
 
     jets.register("inc", inc)
-    tag = jets.cord("inc")
-    formula = f"[11 {tag} [4 0 1]]"  # body is a genuine increment
+    formula = "[11 [%fast %inc] [4 0 1]]"  # body is a genuine increment
     try:
         # ENABLED (default): native runs, agrees with the formula's a+1.
         assert _run("5", formula) == 6
@@ -45,42 +44,46 @@ def test_jet_dispatches_and_stays_transparent():
         finally:
             jets.ENABLED = True
     finally:
-        del jets.REGISTRY[tag]
+        del jets.REGISTRY[jets.cord("inc")]
+
+
+def test_core_clue_head_is_the_name():
+    # Urbit-style clue [name parent hooks]: the head names the jet.
+    jets.register("inc", lambda a: int(a) + 1)
+    try:
+        assert _run("5", "[11 [%fast [%inc 0 0]] [4 0 1]]") == 6
+    finally:
+        del jets.REGISTRY[jets.cord("inc")]
 
 
 def test_validate_catches_a_lying_jet():
     jets.register("wrong", lambda a: int(a) + 100)
-    tag = jets.cord("wrong")
     jets.VALIDATE = True
     try:
         with pytest.raises(Exception):
-            _run("5", f"[11 {tag} [4 0 1]]")  # native 105 != formula 6
+            _run("5", "[11 [%fast %wrong] [4 0 1]]")  # native 105 != formula 6
     finally:
         jets.VALIDATE = False
-        del jets.REGISTRY[tag]
+        del jets.REGISTRY[jets.cord("wrong")]
 
 
 def test_builtin_dec_reads_sample():
     # subject [battery sample]; %dec native reads the sample (tail).
-    tag = jets.cord("dec")
-    assert nock(to_noun((0, 5)), parse(f"[11 {tag} [0 1]]")) == 4
+    assert nock(to_noun((0, 5)), parse("[11 [%fast %dec] [0 1]]")) == 4
 
 
 def test_builtin_dec_zero_crashes():
-    tag = jets.cord("dec")
     with pytest.raises(Exception):
-        nock(to_noun((0, 0)), parse(f"[11 {tag} [0 1]]"))
+        nock(to_noun((0, 0)), parse("[11 [%fast %dec] [0 1]]"))
 
 
 def test_builtin_add():
-    tag = jets.cord("add")
-    assert nock(to_noun((0, (3, 4))), parse(f"[11 {tag} [0 1]]")) == 7
+    assert nock(to_noun((0, (3, 4))), parse("[11 [%fast %add] [0 1]]")) == 7
 
 
 def test_slog_emits_clue_and_stays_transparent():
     # [11 [%slog c] d]: clue *[a c] = [priority tank], body *[a d] = 99.
-    tag = jets.cord("slog")
-    formula = f"[11 [{tag} [1 1 42]] [1 99]]"  # clue [1 42], body 99
+    formula = "[11 [%slog [1 1 42]] [1 99]]"  # clue [1 42], body 99
     captured = []
     old = jets.SLOG
     jets.SLOG = captured.append
@@ -92,19 +95,17 @@ def test_slog_emits_clue_and_stays_transparent():
 
 
 def test_slog_default_sink_writes_stderr(capsys):
-    tag = jets.cord("slog")
-    formula = f"[11 [{tag} [1 1 42]] [1 99]]"
-    assert nock(0, parse(formula)) == 99
+    assert nock(0, parse("[11 [%slog [1 1 42]] [1 99]]")) == 99
     assert "42" in capsys.readouterr().err
 
 
-def test_slog_disabled_tag_is_ordinary_hint():
-    # A non-slog dynamic hint just evaluates+discards its clue, no output.
+def test_other_dynamic_hint_is_silent_noop():
+    # A non-%slog, non-%fast dynamic hint just evaluates+discards its clue.
     captured = []
     old = jets.SLOG
     jets.SLOG = captured.append
     try:
-        assert nock(0, parse("[11 [999999 [1 1 42]] [1 99]]")) == 99
+        assert nock(0, parse("[11 [%memo [1 1 42]] [1 99]]")) == 99
         assert captured == []
     finally:
         jets.SLOG = old

@@ -242,28 +242,38 @@ def nock(a, formula):
                 b = head(first_arg)
                 c = tail(first_arg)
                 d = tail(f_tail)
-                # The clue *[a c] is evaluated and discarded (transparent).
-                # A %slog clue is [priority tank]; emit it before the body.
+
+                # %fast jet hint: [11 [%fast name] body]. `name` is the arm
+                # being accelerated -- a @tas cord (%dec), or an Urbit-style
+                # [name parent hooks] clue whose head is the name. The clue is
+                # metadata, NOT a formula: it is not evaluated. When `name`
+                # names a registered native, it replaces the body; otherwise
+                # the body runs, so the hint stays transparent.
+                if not deep(b) and b == jets.cord("fast"):
+                    name = head(c) if deep(c) else c
+                    jet = jets.lookup(name)
+                    if jet is not None:
+                        if jets.VALIDATE:
+                            want = nock(a, d)
+                            got = to_noun(jet(a))
+                            if got != want:
+                                raise Exception(
+                                    f"jet mismatch for %fast {name}: "
+                                    f"{pretty(got, False)} != {pretty(want, False)}")
+                            return got
+                        return to_noun(jet(a))
+                    return nock(a, d)
+
+                # Any other dynamic hint: the clue *[a c] is computed and
+                # discarded (transparent). A %slog clue is [priority tank];
+                # emit it before the body.
                 clue = nock(a, c)
                 if not deep(b) and b == jets.cord("slog"):
                     jets.SLOG(clue)
                 return nock(a, d)
             else:
-                # *[a 11 b c] = *[a c]  (static hint; b is the tag)
-                # A registered tag jets the transparent body with a native
-                # implementation; otherwise this is an ordinary no-op hint.
+                # *[a 11 b c] = *[a c]  (static hint; b is advisory metadata)
                 c = tail(f_tail)
-                jet = jets.lookup(first_arg)
-                if jet is not None:
-                    if jets.VALIDATE:
-                        want = nock(a, c)
-                        got = to_noun(jet(a))
-                        if got != want:
-                            raise Exception(
-                                f"jet mismatch for tag {first_arg}: "
-                                f"{pretty(got, False)} != {pretty(want, False)}")
-                        return got
-                    return to_noun(jet(a))
                 return nock(a, c)
         
         else:

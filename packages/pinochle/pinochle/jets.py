@@ -2,22 +2,25 @@
 Jet dispatch for the Nock interpreter.
 
 A jet is a native Python implementation of a Nock formula, selected by a
-static opcode-11 hint. In Nock 4K a static hint is transparent:
+%fast opcode-11 hint:
 
-    *[a 11 tag body]  ==  *[a body]
+    *[a 11 [%fast name] body]  ==  *[a body]
 
-so a hint-tagged formula computes exactly what its body would; the tag is
-purely advisory. When jets are ENABLED and `tag` (a @tas cord, e.g. %dec)
-names a registered jet, the interpreter runs the native implementation
-against the subject `a` instead of interpreting `body`. When jets are
-disabled it interprets `body`, so the two paths return identical results --
-a jet only changes cost, never meaning.
+The hint is transparent -- it computes exactly what `body` would -- and its
+clue `[%fast name]` is metadata, not a formula (it is never evaluated).
+`name` is a @tas cord (e.g. %dec) identifying which arm is accelerated, or
+an Urbit-style [name parent hooks] clue whose head is the name. When jets
+are ENABLED and `name` names a registered jet, the interpreter runs the
+native implementation against the subject `a` instead of interpreting
+`body`. When jets are disabled, or `name` is unregistered, it interprets
+`body` -- so the two paths return identical results; a jet only changes
+cost, never meaning.
 
 Correctness contract: jet(a) == *[a body]. VALIDATE mode runs both paths on
 every dispatch and asserts they agree, for certification.
 
 This is the acceleration architecture Vere uses for Hoon's dec/add, minus
-core registration: dispatch is on the static tag alone, with no battery-mug
+core registration: dispatch is on the %fast name alone, with no battery-mug
 warm table. Registering a jet is a promise about a formula, so only
 register natives you have certified (see VALIDATE and the tests).
 """
