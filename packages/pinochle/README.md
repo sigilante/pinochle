@@ -106,6 +106,19 @@ Dispatch keys on the battery mug alone, so it assumes one jet per battery
 (true for gates, not multi-arm cores) and, being a 31-bit mug, could in
 principle collide (astronomically unlikely).
 
+A runnable end-to-end demo — the built-in `%dec` native accelerating the
+genuine O(n) Nock decrement loop, with jets off, jets on, and `VALIDATE` all
+agreeing — is in [`examples/jets_demo.py`](examples/jets_demo.py):
+
+```bash
+python examples/jets_demo.py
+#   dec 7
+#     jets off (formula) : 6
+#     jets on  (native)  : 6
+#     VALIDATE (both=)   : 6
+#     ok: native and formula agree
+```
+
 ## Debug output (`%slog`)
 
 The dynamic hint `[11 [%slog clue] body]` prints its clue (`[priority tank]`)
