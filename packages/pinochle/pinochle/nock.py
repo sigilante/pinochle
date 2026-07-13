@@ -1,4 +1,4 @@
-from .noun import Cell, deep, parse, noun, pretty
+from .noun import Cell, deep, parse, noun, pretty, mug
 from . import jets
 
 # Constants as nouns
@@ -221,6 +221,21 @@ def nock(a, formula):
             # Deep copy b to prevent aliasing issues
             b_copy = deep_copy_noun(b)
             new_formula = Cell(2, Cell(Cell(0, 1), Cell(0, b_copy)))
+            # Jet dispatch: if the core's battery was warmed by a %fast hint,
+            # run the native against the core instead of the arm formula.
+            if deep(new_subject):
+                jet = jets.warm_lookup(head(new_subject))
+                if jet is not None:
+                    if jets.VALIDATE:
+                        want = nock(new_subject, new_formula)
+                        got = to_noun(jet(new_subject))
+                        if got != want:
+                            raise Exception(
+                                f"jet mismatch at battery mug "
+                                f"{mug(head(new_subject))}: "
+                                f"{pretty(got, False)} != {pretty(want, False)}")
+                        return got
+                    return to_noun(jet(new_subject))
             return nock(new_subject, new_formula)
         
         elif opcode == 10:
@@ -245,26 +260,18 @@ def nock(a, formula):
                 c = tail(first_arg)
                 d = tail(f_tail)
 
-                # %fast jet hint: [11 [%fast name] body]. `name` is the arm
-                # being accelerated -- a @tas cord (%dec), or an Urbit-style
-                # [name parent hooks] clue whose head is the name. The clue is
-                # metadata, NOT a formula: it is not evaluated. When `name`
-                # names a registered native, it replaces the body; otherwise
-                # the body runs, so the hint stays transparent.
+                # %fast jet hint: [11 [%fast name] core-formula]. Transparent
+                # -- it produces the core *[a d] -- but as a side effect it
+                # warms the core's battery for jet dispatch at Nock 9. `name`
+                # is a @tas cord (%dec) or an Urbit-style [name parent hooks]
+                # clue whose head is the name; the clue is metadata, never
+                # evaluated as a formula.
                 if not deep(b) and b == jets.cord("fast"):
                     name = head(c) if deep(c) else c
-                    jet = jets.lookup(name)
-                    if jet is not None:
-                        if jets.VALIDATE:
-                            want = nock(a, d)
-                            got = to_noun(jet(a))
-                            if got != want:
-                                raise Exception(
-                                    f"jet mismatch for %fast {name}: "
-                                    f"{pretty(got, False)} != {pretty(want, False)}")
-                            return got
-                        return to_noun(jet(a))
-                    return nock(a, d)
+                    core = nock(a, d)
+                    if deep(core):
+                        jets.warm_register(name, head(core))
+                    return core
 
                 # Any other dynamic hint: the clue *[a c] is computed and
                 # discarded (transparent). A %slog clue is [priority tank];
