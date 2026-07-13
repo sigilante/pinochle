@@ -1,0 +1,39 @@
+name: tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # noun.py uses `int | Cell` (PEP 604), so the floor is Python 3.10.
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    name: py${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install ./packages/pinochle ./packages/nock_kernel pytest
+
+      - name: Unit tests
+        run: pytest packages/pinochle/tests -q
+
+      - name: Doctests
+        run: pytest --doctest-modules --pyargs pinochle -q
+
+      - name: Jets demo (end-to-end smoke)
+        run: python packages/pinochle/examples/jets_demo.py
+
+      - name: Kernel imports
+        run: python -c "import nock_kernel.kernel"

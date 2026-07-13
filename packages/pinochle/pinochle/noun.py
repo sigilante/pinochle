@@ -206,6 +206,11 @@ def parse(s: str):
     """parse strings into nouns. dots in atoms are ignored,
     outermost braces can be omitted.
 
+    A ``%`` prefix introduces a constant, as in Hoon. ``%`` before a number
+    is that number (trivial: an atom is already a constant); ``%`` before a
+    term (``a-z``, ``-``, ``.``, etc.) is the term's bytes as a little-endian
+    atom -- the @tas cord. So ``%dec`` is the cord for "dec".
+
     >>> parse('1.024')
     1024
     >>> x = parse('[[1 2] 3]')
@@ -214,23 +219,39 @@ def parse(s: str):
     >>> x = parse('[1 2] 3')
     >>> [x.head.head, x.head.tail, x.tail]
     [1, 2, 3]
+    >>> parse('%dec') == int.from_bytes(b'dec', 'little')
+    True
+    >>> parse('%42')
+    42
+    >>> x = parse('[%fast %dec]')
+    >>> [x.head, x.tail] == [int.from_bytes(b'fast', 'little'), \
+                             int.from_bytes(b'dec', 'little')]
+    True
     """
 
     sep = True
-    start = 0
+    is_term = False
     wait = []
     top = (0, [])
-    num = []
+    tok = []
 
     def frame(i: int):
         return (i, [])
 
     def end_atom():
-        nonlocal sep
+        nonlocal sep, is_term
         if not sep:
             sep = True
-            top[1].append(int(''.join(num)))
-            num.clear()
+            if is_term:
+                t = ''.join(tok)
+                if t.isdigit():                 # %42 -> 42 (constant number)
+                    top[1].append(int(t))
+                else:                           # %dec -> little-endian cord
+                    top[1].append(int.from_bytes(t.encode(), 'little'))
+                is_term = False
+            else:
+                top[1].append(int(''.join(tok)))
+            tok.clear()
 
     def end_cell():
         items = top[1]
@@ -246,31 +267,36 @@ def parse(s: str):
 
     for i in range(0, len(s)):
         c = s[i]
-        match c:
-            case '[':
-                end_atom()
-                wait.append(top)
-                top = frame(i)
-            case ']':
-                if not wait:
-                    raise ValueError('unmatched ] at %d' % i)
-                end_atom()
-                val = end_cell()
-                top = wait.pop()
-                top[1].append(val)
-            case ' ':
-                end_atom()
-            case '.':
-                if sep:
-                    raise ValueError('floating dot at %d' % i)
-            case _:
-                if not str.isdigit(c):
-                    raise ValueError('unrecognized character %s at %d' % (c, i))
-                else:
-                    if sep:
-                        start = i
-                        sep = False
-                    num.append(c)
+        if c == '[':
+            end_atom()
+            wait.append(top)
+            top = frame(i)
+        elif c == ']':
+            if not wait:
+                raise ValueError('unmatched ] at %d' % i)
+            end_atom()
+            val = end_cell()
+            top = wait.pop()
+            top[1].append(val)
+        elif c == ' ':
+            end_atom()
+        elif c == '%':
+            if not sep:
+                raise ValueError('unexpected %% at %d' % i)
+            sep = False                         # begin a constant token
+            is_term = True
+        elif is_term:
+            tok.append(c)                       # any non-delimiter is term text
+        elif c == '.':
+            if sep:
+                raise ValueError('floating dot at %d' % i)
+            # dot inside a number is a digit separator: ignore
+        else:
+            if not str.isdigit(c):
+                raise ValueError('unrecognized character %s at %d' % (c, i))
+            if sep:
+                sep = False
+            tok.append(c)
     if wait:
         raise ValueError('unclosed [ at %d' % top[0])
     end_atom()

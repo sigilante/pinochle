@@ -1,4 +1,5 @@
-from .noun import Cell, deep, parse, noun, pretty
+from .noun import Cell, deep, parse, noun, pretty, mug
+from . import jets
 
 # Constants as nouns
 tru = 0
@@ -15,11 +16,13 @@ def deep_copy_noun(n: noun) -> noun:
     
 def to_noun(n) -> noun:
     """Convert Python values to nouns using pynoun's representation"""
-    if isinstance(n, noun):
-        return n
-    elif isinstance(n, int):
+    if isinstance(n, int):
+        # (before the `noun` catch-all: noun = int | Cell, so this is where
+        # the non-negative guard actually gets a chance to run)
         if n < 0:
             raise ValueError(f"Noun integers must be non-negative, got {n}")
+        return n
+    elif isinstance(n, noun):
         return n
     elif isinstance(n, tuple):
         if len(n) == 0:
@@ -218,6 +221,21 @@ def nock(a, formula):
             # Deep copy b to prevent aliasing issues
             b_copy = deep_copy_noun(b)
             new_formula = Cell(2, Cell(Cell(0, 1), Cell(0, b_copy)))
+            # Jet dispatch: if the core's battery was warmed by a %fast hint,
+            # run the native against the core instead of the arm formula.
+            if deep(new_subject):
+                jet = jets.warm_lookup(head(new_subject))
+                if jet is not None:
+                    if jets.VALIDATE:
+                        want = nock(new_subject, new_formula)
+                        got = to_noun(jet(new_subject))
+                        if got != want:
+                            raise Exception(
+                                f"jet mismatch at battery mug "
+                                f"{mug(head(new_subject))}: "
+                                f"{pretty(got, False)} != {pretty(want, False)}")
+                        return got
+                    return to_noun(jet(new_subject))
             return nock(new_subject, new_formula)
         
         elif opcode == 10:
@@ -237,15 +255,38 @@ def nock(a, formula):
             # *[a 11 b c] = *[a c]
             first_arg = head(f_tail)
             
-            if deep(first_arg):  # first_arg is [b c]
+            if deep(first_arg):  # dynamic hint [11 [b c] d]
                 b = head(first_arg)
                 c = tail(first_arg)
                 d = tail(f_tail)
-                new_subject = Cell(nock(a, c), nock(a, d))
-                return nock(new_subject, Cell(0, 3))
+
+                # %fast jet hint: [11 [%fast name] core-formula]. Transparent
+                # -- it produces the core *[a d] -- but as a side effect it
+                # warms the core's battery for jet dispatch at Nock 9. `name`
+                # is a @tas cord (%dec) or an Urbit-style [name parent hooks]
+                # clue whose head is the name; the clue is metadata, never
+                # evaluated as a formula.
+                if not deep(b) and b == jets.cord("fast"):
+                    name = head(c) if deep(c) else c
+                    core = nock(a, d)
+                    if deep(core):
+                        jets.warm_register(name, head(core))
+                    return core
+
+                # Any other dynamic hint: the clue *[a c] is computed and
+                # discarded (transparent). A %slog clue is [priority tank];
+                # emit it before the body.
+                clue = nock(a, c)
+                if not deep(b) and b == jets.cord("slog"):
+                    jets.SLOG(clue)
+                return nock(a, d)
             else:
-                # *[a 11 b c]
+                # *[a 11 b c] = *[a c]  (static hint; b is advisory metadata)
                 c = tail(f_tail)
+                # %bout times the body's evaluation (Urbit's ~>(%bout .)),
+                # transparent otherwise.  first_arg is the static tag.
+                if not deep(first_arg) and first_arg == jets.cord("bout"):
+                    return jets.bout(lambda: nock(a, c))
                 return nock(a, c)
         
         else:

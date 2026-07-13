@@ -89,3 +89,4 @@ This project is licensed under the MIT License - see [LICENSE](./LICENSE) for de
 - 1.1.0 - Added variable definition and substitution in Nock kernel.
 - 1.2.0 - Improved variable substitution and `:show` precision in Nock kernel.
 - 1.2.1 - Bug fix to speculative `timeout` handler that was never implemented.
+- 1.3.0 - `%term` (`@tas`) parsing; transparent `%fast` jet hints (register-then-match on battery mug, dispatched at Nock 9) with `VALIDATE` certification and built-in `dec`/`add`/`sub`/`mul`/`lte`; `%slog` and `%bout` debug/timing hints via redirectable sinks. See the [core-library README](packages/pinochle/README.md#jets-and-hints).
