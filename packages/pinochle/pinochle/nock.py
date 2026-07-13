@@ -283,6 +283,10 @@ def nock(a, formula):
             else:
                 # *[a 11 b c] = *[a c]  (static hint; b is advisory metadata)
                 c = tail(f_tail)
+                # %bout times the body's evaluation (Urbit's ~>(%bout .)),
+                # transparent otherwise.  first_arg is the static tag.
+                if not deep(first_arg) and first_arg == jets.cord("bout"):
+                    return jets.bout(lambda: nock(a, c))
                 return nock(a, c)
         
         else:

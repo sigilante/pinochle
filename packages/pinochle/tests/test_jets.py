@@ -158,3 +158,31 @@ def test_other_dynamic_hint_is_silent_noop():
         assert captured == []
     finally:
         jets.SLOG = old
+
+
+# --- %bout (static timing hint) -----------------------------------------
+
+def test_bout_times_and_stays_transparent():
+    captured = []
+    old = jets.BOUT
+    jets.BOUT = captured.append
+    try:
+        assert nock(5, parse("[11 %bout [4 0 1]]")) == 6     # +5, transparent
+        assert len(captured) == 1 and captured[0] >= 0        # elapsed ns
+    finally:
+        jets.BOUT = old
+
+def test_bout_default_sink_writes_stderr(capsys):
+    assert nock(5, parse("[11 %bout [4 0 1]]")) == 6
+    assert "bout" in capsys.readouterr().err
+
+def test_bout_reports_even_on_crash():
+    captured = []
+    old = jets.BOUT
+    jets.BOUT = captured.append
+    try:
+        with pytest.raises(Exception):
+            nock(5, parse("[11 %bout [0 3]]"))                # /[3 5] crashes
+        assert len(captured) == 1
+    finally:
+        jets.BOUT = old

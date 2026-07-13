@@ -119,17 +119,22 @@ python examples/jets_demo.py
 #     ok: native and formula agree
 ```
 
-## Debug output (`%slog`)
+## Debug hints (`%slog`, `%bout`)
 
 The dynamic hint `[11 [%slog clue] body]` prints its clue (`[priority tank]`)
-before producing `body`, the Nock analogue of Hoon's `~&`.  It stays
-transparent — `body`'s value is unchanged.  Output goes to stderr by default
-through a redirectable sink:
+before producing `body`, the Nock analogue of Hoon's `~&`.  The static hint
+`[11 %bout body]` times the evaluation of `body` and reports the elapsed time,
+Urbit's `~>(%bout .)`.  Both stay transparent — the body's value is unchanged
+— and both write to stderr by default through a redirectable sink:
 
 ```python
 from pinochle import jets
-# e.g. route ~& output into a Jupyter cell instead of the server's stderr
+
+# route ~& output into a Jupyter cell instead of the server's stderr
 jets.SLOG = lambda clue: my_stream_writer(clue)
+
+# collect timings instead of printing them (elapsed is in nanoseconds)
+jets.BOUT = lambda elapsed_ns: timings.append(elapsed_ns)
 ```
 
 ## API Reference

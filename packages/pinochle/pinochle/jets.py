@@ -39,6 +39,8 @@ cores); and mug is 31-bit, so distinct batteries could in principle collide
 (astronomically unlikely).
 """
 
+import time
+
 from .noun import Cell, deep, pretty, mug
 
 
@@ -52,6 +54,27 @@ def _default_slog(clue):
 #: sink for %slog debug hints: fn(clue_noun) -> None. Reassign to redirect
 #: (e.g. a Jupyter kernel routing slogs into cell output).
 SLOG = _default_slog
+
+
+def _default_bout(elapsed_ns):
+    """Default %bout sink: print the elapsed time of the timed formula."""
+    import sys
+    sys.stderr.write(f"bout: {elapsed_ns / 1e6:.3f} ms\n")
+
+
+#: sink for %bout timing hints: fn(elapsed_ns) -> None. Reassign to redirect
+#: or silence (set to a no-op).
+BOUT = _default_bout
+
+
+def bout(thunk):
+    """Time `thunk()`, report the elapsed nanoseconds via BOUT, return its
+    result.  Reports even if the body crashes, matching Urbit's %bout."""
+    start = time.perf_counter_ns()
+    try:
+        return thunk()
+    finally:
+        BOUT(time.perf_counter_ns() - start)
 
 #: master switch: when False, nothing warms and nothing dispatches
 ENABLED = True
