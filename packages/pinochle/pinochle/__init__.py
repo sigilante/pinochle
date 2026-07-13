@@ -33,7 +33,7 @@ from .jets import register as register_jet
 # Convenience alias
 parse_noun = parse
 
-__version__ = '1.2.1'
+__version__ = '1.3.0'
 __all__ = [
     'nock',
     'to_noun',
